@@ -1,0 +1,53 @@
+on:
+  push:
+    tags: ["*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        versions:
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+    runs-on: ${{ matrix.versions.os }}
+    name: ${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: GOOS=${{ matrix.versions.goos }} GOARCH=${{ matrix.versions.goarch }} go build -o serve
+      - run: tar -czf serve-${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}.tar.gz serve
+      - uses: actions/upload-artifact@v4
+        with:
+          name: serve-${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}
+          path: serve-${{ matrix.versions.goos }}-${{ matrix.versions.goarch }}.tar.gz
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            serve-darwin-arm64.tar.gz
+            serve-linux-amd64.tar.gz
+      - uses: noClaps/homebrew-tap-action@v1.1.0
+        with:
+          tap_repo: noClaps/homebrew-tap
+          formula_name: serve
+          version: ${{ github.ref_name }}
+          tap_token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          macos_file: serve-darwin-arm64.tar.gz
+          linux_file: serve-linux-amd64.tar.gz
