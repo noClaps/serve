@@ -21,7 +21,14 @@ func main() {
 	}
 
 	fs := http.FileServer(http.Dir(args.Directory))
-	http.Handle("/", fs)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		if _, err := os.Stat(args.Directory + path + ".html"); err == nil {
+			http.ServeFile(w, r, args.Directory+path+".html")
+			return
+		}
+		fs.ServeHTTP(w, r)
+	})
 
 	fmt.Printf("Server started at http://localhost:%d\n", args.Port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", args.Port), nil); err != nil {
