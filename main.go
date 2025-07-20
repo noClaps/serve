@@ -22,9 +22,9 @@ func main() {
 
 	fs := http.FileServer(http.Dir(args.Directory))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		path := r.URL.Path
-		if _, err := os.Stat(args.Directory + path + ".html"); err == nil {
-			http.ServeFile(w, r, args.Directory+path+".html")
+		path := args.Directory + r.URL.Path + ".html"
+		if _, err := os.Stat(path); err == nil {
+			http.ServeFile(w, r, path)
 			return
 		}
 		fs.ServeHTTP(w, r)
