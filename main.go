@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/noclaps/applause"
 )
@@ -22,9 +24,13 @@ func main() {
 
 	fs := http.FileServer(http.Dir(args.Directory))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		path := r.URL.Path
-		if _, err := os.Stat(args.Directory + path + ".html"); err == nil {
-			http.ServeFile(w, r, args.Directory+path+".html")
+		absPath, err := filepath.Abs(filepath.Join(args.Directory, r.URL.Path, ".html"))
+		if err != nil || !strings.HasPrefix(absPath, args.Directory) {
+			http.Error(w, "Invalid path", http.StatusBadRequest)
+			return
+		}
+		if _, err := os.Stat(absPath); err == nil {
+			http.ServeFile(w, r, absPath)
 			return
 		}
 		fs.ServeHTTP(w, r)
