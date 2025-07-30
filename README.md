@@ -4,13 +4,7 @@ A simple HTTP server for serving a directory.
 
 ## Installation
 
-You can install it from Homebrew:
-
-```sh
-brew install noclaps/tap/serve
-```
-
-or build it from source using [Go](https://go.dev):
+You can build it from source using [Go](https://go.dev):
 
 ```sh
 go install github.com/noclaps/serve@latest
