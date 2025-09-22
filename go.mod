@@ -1,4 +1,4 @@
-module github.com/noclaps/serve
+module tangled.org/zerolimits.dev/serve
 
 go 1.25.0
 
