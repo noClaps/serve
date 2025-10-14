@@ -7,7 +7,7 @@ A simple HTTP server for serving a directory.
 You can build it from source using [Go](https://go.dev):
 
 ```sh
-go install tangled.org/zerolimits.dev/serve@latest
+go install github.com/noclaps/serve@latest
 ```
 
 ## Usage
