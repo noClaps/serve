@@ -1,28 +1,29 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
-
-	"github.com/noclaps/applause"
+	"strings"
 )
 
-type Args struct {
-	Directory string `help:"The directory to serve."`
-	Port      int    `type:"option" short:"p" help:"The port to serve at."`
-}
-
 func main() {
-	args := Args{Port: 3000}
-	if err := applause.Parse(&args); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	var port uint = 3000
+	flag.UintVar(&port, "port", 3000, "The port to serve at.")
 
-	fs := http.FileServer(http.Dir(args.Directory))
+	path := strings.Split(os.Getenv("PWD"), "/")
+	cwd := path[len(path)-1]
+	hostname := fmt.Sprintf("%s.localhost", cwd)
+	flag.StringVar(&hostname, "host", hostname, "The hostname to serve at.")
+
+	flag.Parse()
+
+	directory := flag.Arg(0)
+
+	fs := http.FileServer(http.Dir(directory))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		path := args.Directory + r.URL.Path + ".html"
+		path := directory + r.URL.Path + ".html"
 		if _, err := os.Stat(path); err == nil {
 			http.ServeFile(w, r, path)
 			return
@@ -30,8 +31,8 @@ func main() {
 		fs.ServeHTTP(w, r)
 	})
 
-	fmt.Printf("Server started at http://localhost:%d\n", args.Port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", args.Port), nil); err != nil {
+	fmt.Printf("Server started at http://%s:%d\n", hostname, port)
+	if err := http.ListenAndServe(fmt.Sprintf("%s:%d", hostname, port), nil); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
