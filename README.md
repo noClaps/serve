@@ -7,7 +7,7 @@ A simple HTTP server for serving a directory.
 You can build it from source using [Go](https://go.dev):
 
 ```sh
-go install github.com/noclaps/serve@latest
+go install codeberg.org/noclaps/serve@latest
 ```
 
 ## Usage
