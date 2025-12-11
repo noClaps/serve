@@ -5,17 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 )
 
 func main() {
 	var port uint = 3000
 	flag.UintVar(&port, "port", 3000, "The port to serve at.")
-
-	path := strings.Split(os.Getenv("PWD"), "/")
-	cwd := path[len(path)-1]
-	hostname := fmt.Sprintf("%s.localhost", cwd)
-	flag.StringVar(&hostname, "host", hostname, "The hostname to serve at.")
 
 	flag.Parse()
 
@@ -31,8 +25,8 @@ func main() {
 		fs.ServeHTTP(w, r)
 	})
 
-	fmt.Printf("Server started at http://%s:%d\n", hostname, port)
-	if err := http.ListenAndServe(fmt.Sprintf("%s:%d", hostname, port), nil); err != nil {
+	fmt.Printf("Server started at http://localhost:%d\n", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
