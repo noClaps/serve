@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 )
@@ -14,6 +15,7 @@ func main() {
 	flag.Parse()
 
 	directory := flag.Arg(0)
+	server := http.Server{Addr: fmt.Sprintf(":%d", port)}
 
 	fs := http.FileServer(http.Dir(directory))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -25,9 +27,8 @@ func main() {
 		fs.ServeHTTP(w, r)
 	})
 
-	fmt.Printf("Server started at http://localhost:%d\n", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	fmt.Printf("Server started at http://localhost%s\n", server.Addr)
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalln(err)
 	}
 }
