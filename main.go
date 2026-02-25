@@ -18,7 +18,7 @@ func main() {
 	if directory == "" {
 		pwd, err := os.Getwd()
 		if err != nil {
-			log.Fatalln("Error getting PWD:", err)
+			log.Fatalln(err)
 		}
 		directory = pwd
 	}
