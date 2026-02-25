@@ -15,6 +15,13 @@ func main() {
 	flag.Parse()
 
 	directory := flag.Arg(0)
+	if directory == "" {
+		pwd, err := os.Getwd()
+		if err != nil {
+			log.Fatalln("Error getting PWD:", err)
+		}
+		directory = pwd
+	}
 	server := http.Server{Addr: fmt.Sprintf(":%d", port)}
 
 	fs := http.FileServer(http.Dir(directory))
