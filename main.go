@@ -6,11 +6,25 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func main() {
 	var port uint = 3000
 	flag.UintVar(&port, "port", 3000, "The port to serve at.")
+
+	flag.Usage = func() {
+		w := flag.CommandLine.Output()
+		fmt.Fprintf(w, `Usage: %s [options] [directory]
+
+Arguments:
+  directory
+        The directory to serve. (default pwd)
+
+Options:
+`, filepath.Base(os.Args[0]))
+		flag.PrintDefaults()
+	}
 
 	flag.Parse()
 
