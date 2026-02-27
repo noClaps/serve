@@ -13,7 +13,13 @@ go install codeberg.org/noclaps/serve@latest
 ## Usage
 
 ```
-Usage of serve:
+Usage: serve [options] [directory]
+
+Arguments:
+  directory
+        The directory to serve. (default pwd)
+
+Options:
   -port uint
     	The port to serve at. (default 3000)
 ```
