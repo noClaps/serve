@@ -37,7 +37,7 @@ async fn main() -> Result<(), io::Error> {
         ),
     );
 
-    println!("Server started at http://localhost:{}", port);
+    println!("Server started at http://localhost:{port}");
     axum::serve(listener, router).await
 }
 
