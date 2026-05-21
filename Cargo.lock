@@ -5,7 +5,7 @@ version = 4
 [[package]]
 name = "argparse"
 version = "0.1.0"
-source = "git+https://github.com/noClaps/argparse#894d517ee37f047e0f0c732f21ea3b9327a31b18"
+source = "git+https://github.com/noClaps/argparse#2cf7059e89edf04501fc7a45efe21c2720bca648"
 
 [[package]]
 name = "atomic-waker"

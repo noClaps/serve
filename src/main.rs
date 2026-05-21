@@ -22,9 +22,15 @@ struct AppState {
 async fn main() {
     let args = ArgParse::new()
         .positional("directory", "The directory to serve")
-        .flag("port", "port", Some("p"), "The port to serve at", false)
+        .flag(
+            "port",
+            "port",
+            Some("p"),
+            "The port to serve at (default: 3000)",
+            false,
+        )
         .parse();
-    let port = args.flag("port").unwrap();
+    let port = args.flag("port", 3000).unwrap();
     let directory = args.positional("directory").unwrap();
 
     let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), port);

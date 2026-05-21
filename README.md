@@ -19,7 +19,7 @@ POSITIONALS:
   <directory>          The directory to serve
 
 FLAGS:
-  -p, --port <port>    The port to serve at
+  -p, --port <port>    The port to serve at (default: 3000)
   -h, --help           Display this help and exit.
 ```
 
