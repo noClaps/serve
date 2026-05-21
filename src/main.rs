@@ -10,7 +10,7 @@ use axum::{
     http::{StatusCode, Uri},
     response::{IntoResponse, Response},
 };
-use tokio::{io, net::TcpListener};
+use tokio::net::TcpListener;
 use tower_http::services::ServeDir;
 
 #[derive(Clone)]
@@ -19,7 +19,7 @@ struct AppState {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), io::Error> {
+async fn main() {
     let args = ArgParse::new()
         .positional("directory", "The directory to serve")
         .flag("port", "port", Some("p"), "The port to serve at", false)
@@ -28,7 +28,9 @@ async fn main() -> Result<(), io::Error> {
     let directory = args.positional("directory").unwrap();
 
     let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), port);
-    let listener = TcpListener::bind(addr).await?;
+    let listener = TcpListener::bind(addr)
+        .await
+        .expect("Error while creating listener");
     let router = Router::new().fallback_service(
         ServeDir::new(&directory).fallback(
             Router::new()
@@ -38,13 +40,15 @@ async fn main() -> Result<(), io::Error> {
     );
 
     println!("Server started at http://localhost:{port}");
-    axum::serve(listener, router).await
+    axum::serve(listener, router)
+        .await
+        .expect("Error while running server");
 }
 
 async fn fallback(State(state): State<AppState>, uri: Uri) -> Response {
     let path = state
         .root
-        .join(format!("{}.html", uri.path().trim_start_matches("/")));
+        .join(format!("{}.html", uri.path().trim_start_matches('/')));
 
     match tokio::fs::read_to_string(path).await {
         Ok(contents) => (StatusCode::OK, [("Content-Type", "text/html")], contents).into_response(),
