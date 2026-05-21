@@ -13,14 +13,14 @@ cargo install --git https://github.com/noClaps/serve
 ## Usage
 
 ```
-USAGE: serve <directory> [--port <port>]
+Usage: serve [OPTIONS] <DIRECTORY>
 
-POSITIONALS:
-  <directory>          The directory to serve
+Arguments:
+  <DIRECTORY>  The directory to serve
 
-FLAGS:
-  -p, --port <port>    The port to serve at (default: 3000)
-  -h, --help           Display this help and exit.
+Options:
+  -p, --port <PORT>  The port to serve at [default: 3000]
+  -h, --help         Print help
 ```
 
 You can use the tool simply by running:

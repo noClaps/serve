@@ -3,15 +3,25 @@ use std::{
     path::PathBuf,
 };
 
-use argparse::ArgParse;
 use axum::{
     Router,
     extract::State,
     http::{StatusCode, Uri},
     response::{IntoResponse, Response},
 };
+use clap::Parser;
 use tokio::net::TcpListener;
 use tower_http::services::ServeDir;
+
+#[derive(Parser)]
+struct Args {
+    #[clap(short, long, default_value_t = 3000)]
+    /// The port to serve at
+    port: u16,
+
+    /// The directory to serve
+    directory: PathBuf,
+}
 
 #[derive(Clone)]
 struct AppState {
@@ -20,32 +30,19 @@ struct AppState {
 
 #[tokio::main]
 async fn main() {
-    let args = ArgParse::new()
-        .positional("directory", "The directory to serve")
-        .flag(
-            "port",
-            "port",
-            Some("p"),
-            "The port to serve at (default: 3000)",
-            false,
-        )
-        .parse();
-    let port = args.flag("port", 3000).unwrap();
-    let directory = args.positional("directory").unwrap();
+    let args = Args::parse();
 
-    let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), port);
+    let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), args.port);
     let listener = TcpListener::bind(addr)
         .await
         .expect("Error while creating listener");
-    let router = Router::new().fallback_service(
-        ServeDir::new(&directory).fallback(
-            Router::new()
-                .fallback(fallback)
-                .with_state(AppState { root: directory }),
-        ),
-    );
+    let router = Router::new().fallback_service(ServeDir::new(&args.directory).fallback(
+        Router::new().fallback(fallback).with_state(AppState {
+            root: args.directory,
+        }),
+    ));
 
-    println!("Server started at http://localhost:{port}");
+    println!("Server started at http://localhost:{}", args.port);
     axum::serve(listener, router)
         .await
         .expect("Error while running server");
