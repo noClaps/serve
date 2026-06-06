@@ -1,21 +1,14 @@
 use std::{
     fs::File,
     net::{Ipv4Addr, SocketAddr},
-    path::{PathBuf, absolute},
+    path::absolute,
 };
 
-use clap::Parser;
 use tiny_http::{Response, Server};
 
-#[derive(Parser)]
-struct Args {
-    #[clap(short, long, default_value_t = 3000)]
-    /// The port to serve at
-    port: u16,
+use crate::args::Args;
 
-    /// The directory to serve
-    directory: PathBuf,
-}
+mod args;
 
 fn main() {
     let args = Args::parse();
