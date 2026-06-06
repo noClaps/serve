@@ -60,10 +60,12 @@ See `serve --help` for the full documentation.
             args.remove(pos + 1); // removes --port [port]
             args.remove(pos); // removes [--port]
 
-            parsed.port = p.parse().expect(&format!("Error parsing `{p}` to u16"));
+            parsed.port = p
+                .parse()
+                .unwrap_or_else(|err| panic!("Error parsing `{p}` to u16: {err}"));
         }
 
-        if args.len() < 1 {
+        if args.is_empty() {
             println!(
                 r"
 Missing required argument: <directory>
