@@ -2,10 +2,10 @@ use std::{error, fmt, io};
 
 #[derive(Debug)]
 pub enum Error {
-    IoError(io::Error),
-    TinyHttpError(Box<dyn error::Error + Send + Sync>),
-    FileTypeError(file_type::Error),
-    UnitError,
+    Io(io::Error),
+    TinyHttp(Box<dyn error::Error + Send + Sync>),
+    FileType(file_type::Error),
+    Unit,
 }
 
 impl error::Error for Error {}
@@ -16,10 +16,10 @@ impl fmt::Display for Error {
             f,
             "{:?}",
             match self {
-                Self::IoError(err) => err.to_string(),
-                Self::TinyHttpError(err) => err.to_string(),
-                Self::FileTypeError(err) => err.to_string(),
-                Self::UnitError => "Unknown error".to_string(),
+                Self::Io(err) => err.to_string(),
+                Self::TinyHttp(err) => err.to_string(),
+                Self::FileType(err) => err.to_string(),
+                Self::Unit => "Unknown error".to_string(),
             },
         )
     }
@@ -27,24 +27,24 @@ impl fmt::Display for Error {
 
 impl From<io::Error> for Error {
     fn from(value: io::Error) -> Self {
-        Self::IoError(value)
+        Self::Io(value)
     }
 }
 
 impl From<Box<dyn error::Error + Send + Sync>> for Error {
     fn from(value: Box<dyn error::Error + Send + Sync>) -> Self {
-        Self::TinyHttpError(value)
+        Self::TinyHttp(value)
     }
 }
 
 impl From<file_type::Error> for Error {
     fn from(value: file_type::Error) -> Self {
-        Self::FileTypeError(value)
+        Self::FileType(value)
     }
 }
 
 impl From<()> for Error {
     fn from(_: ()) -> Self {
-        Self::UnitError
+        Self::Unit
     }
 }
