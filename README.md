@@ -5,14 +5,15 @@ A simple HTTP server for serving a directory.
 ## Usage
 
 ```
-Usage: serve <directory> [--port <port>]
+Usage: serve <DIRECTORY> [--port <port>]
 
 Arguments:
-  <directory>          The directory to serve.
+  <DIRECTORY>          The directory to serve.
 
 Options:
   -p, --port <port>    The port to serve at. (default: 3000)
-  -h, --help           Show this help and exit.
+  -h, --help           Display this help and exit.
+  -V, --version        Display version and exit.
 ```
 
 You can use the tool simply by running:
@@ -41,8 +42,11 @@ serve --help
 
 ## Installation
 
-You can build it from source using [Rust](https://rust-lang.org):
+You can download a version for your system from [Releases](https://github.com/noClaps/serve/releases).
+
+You can also build it from source using [Zig](https://ziglang.org):
 
 ```sh
-cargo install --git https://github.com/noClaps/serve
+git clone https://github.com/noClaps/serve.git && cd serve
+zig build
 ```

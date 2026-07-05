@@ -1,0 +1,25 @@
+on:
+  push:
+    tags:
+      - v*
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    strategy:
+      fail-fast: true
+      matrix:
+        arch: [x86_64, aarch64]
+        os: [macos, linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.0
+      - uses: mlugg/setup-zig@v2.2.1
+      - run: zig build --release=safe -Dtarget=${{ matrix.arch }}-${{ matrix.os }}
+      - run: cp zig-out/bin/serve serve-${{ matrix.arch }}-${{ matrix.os }}
+      - uses: softprops/action-gh-release@v3.0.1
+        with:
+          files: serve-${{ matrix.arch }}-${{ matrix.os }}
+          draft: true
