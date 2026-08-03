@@ -44,5 +44,5 @@ serve --help
 You can build it from source using [Rust](https://rust-lang.org):
 
 ```sh
-cargo install --git https://github.com/noClaps/serve
+cargo install --git https://codeberg.org/noClaps/serve
 ```
