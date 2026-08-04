@@ -2,10 +2,11 @@ use std::{
     fs::File,
     net::{Ipv4Addr, SocketAddr},
     path::{PathBuf, absolute},
+    str::FromStr,
 };
 
 use clap::Parser;
-use file_type::FileType;
+use mime_guess::{Mime, MimeGuess};
 use tiny_http::{Header, Response, Server};
 
 use crate::error::Error;
@@ -44,10 +45,12 @@ fn main() -> Result<(), Error> {
         };
 
         if file_path.is_file() {
-            let file_type = FileType::try_from_file(&file_path)?;
-            request.respond(Response::from_file(File::open(file_path)?).with_header(
-                Header::from_bytes("Content-Type", file_type.media_types()[0])?,
-            ))?;
+            let file_type =
+                MimeGuess::from_path(&file_path).first_or(Mime::from_str("text/plain").unwrap());
+            request.respond(
+                Response::from_file(File::open(file_path)?)
+                    .with_header(Header::from_bytes("Content-Type", file_type.to_string())?),
+            )?;
             continue;
         }
         if let file_path = file_path.with_extension("html")

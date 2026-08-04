@@ -4,7 +4,6 @@ use std::{error, fmt, io};
 pub enum Error {
     Io(io::Error),
     TinyHttp(Box<dyn error::Error + Send + Sync>),
-    FileType(file_type::Error),
     Unit,
 }
 
@@ -18,7 +17,6 @@ impl fmt::Display for Error {
             match self {
                 Self::Io(err) => err.to_string(),
                 Self::TinyHttp(err) => err.to_string(),
-                Self::FileType(err) => err.to_string(),
                 Self::Unit => "Unknown error".to_string(),
             },
         )
@@ -34,12 +32,6 @@ impl From<io::Error> for Error {
 impl From<Box<dyn error::Error + Send + Sync>> for Error {
     fn from(value: Box<dyn error::Error + Send + Sync>) -> Self {
         Self::TinyHttp(value)
-    }
-}
-
-impl From<file_type::Error> for Error {
-    fn from(value: file_type::Error) -> Self {
-        Self::FileType(value)
     }
 }
 
