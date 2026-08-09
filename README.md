@@ -5,14 +5,16 @@ A simple HTTP server for serving a directory.
 ## Usage
 
 ```
-Usage: serve <directory> [--port <port>]
+Usage: serve [-p <port>] <directory>
+
+A simple HTTP server for serving a directory.
 
 Arguments:
-  <directory>          The directory to serve.
+  directory          The directory to serve.
 
 Options:
-  -p, --port <port>    The port to serve at. (default: 3000)
-  -h, --help           Show this help and exit.
+  -p, --port <port>  The port to serve at. (default: 3000)
+  -h, --help         Show this help message and exit.
 ```
 
 You can use the tool simply by running:

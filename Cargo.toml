@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-clap = { version = "4.6.5", features = ["derive"] }
+argp = "0.4.1"
 mime_guess = "2.0.5"
 tiny_http = "0.12.0"

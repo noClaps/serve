@@ -5,7 +5,7 @@ use std::{
     str::FromStr,
 };
 
-use clap::Parser;
+use argp::FromArgs;
 use mime_guess::{Mime, MimeGuess};
 use tiny_http::{Header, Response, Server};
 
@@ -13,19 +13,20 @@ use crate::error::Error;
 
 mod error;
 
-#[derive(Parser)]
-/// A simple HTTP server for serving a directory
+#[derive(FromArgs)]
+/// A simple HTTP server for serving a directory.
 struct Args {
-    /// The directory to serve
+    /// The directory to serve.
+    #[argp(positional)]
     directory: PathBuf,
 
-    /// The port to serve at
-    #[clap(short, long, default_value_t = 3000)]
+    /// The port to serve at. (default: 3000)
+    #[argp(option, short = 'p', default = "3000")]
     port: u16,
 }
 
 fn main() -> Result<(), Error> {
-    let args = Args::parse();
+    let args: Args = argp::parse_args_or_exit(argp::DEFAULT);
 
     let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), args.port);
     let server = Server::http(addr)?;
