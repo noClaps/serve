@@ -9,10 +9,6 @@ use argp::FromArgs;
 use mime_guess::{Mime, MimeGuess};
 use tiny_http::{Header, Response, Server};
 
-use crate::error::Error;
-
-mod error;
-
 #[derive(FromArgs)]
 /// A simple HTTP server for serving a directory.
 struct Args {
@@ -25,16 +21,16 @@ struct Args {
     port: u16,
 }
 
-fn main() -> Result<(), Error> {
+fn main() {
     let args: Args = argp::parse_args_or_exit(argp::DEFAULT);
 
     let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), args.port);
-    let server = Server::http(addr)?;
+    let server = Server::http(addr).unwrap();
     println!("Server started at http://localhost:{}", args.port);
 
     for request in server.incoming_requests() {
         let url = request.url();
-        let url = absolute(url)?;
+        let url = absolute(url).unwrap();
         let file_path = match url.strip_prefix("/") {
             Ok(p) => args.directory.join(p),
             Err(_) => args.directory.join(url),
@@ -48,32 +44,37 @@ fn main() -> Result<(), Error> {
         if file_path.is_file() {
             let file_type =
                 MimeGuess::from_path(&file_path).first_or(Mime::from_str("text/plain").unwrap());
-            request.respond(
-                Response::from_file(File::open(file_path)?)
-                    .with_header(Header::from_bytes("Content-Type", file_type.to_string())?),
-            )?;
+            request
+                .respond(
+                    Response::from_file(File::open(file_path).unwrap()).with_header(
+                        Header::from_bytes("Content-Type", file_type.to_string()).unwrap(),
+                    ),
+                )
+                .unwrap();
             continue;
         }
         if let file_path = file_path.with_extension("html")
             && file_path.is_file()
         {
-            request.respond(
-                Response::from_file(File::open(file_path)?)
-                    .with_header(Header::from_bytes("Content-Type", "text/html")?),
-            )?;
+            request
+                .respond(
+                    Response::from_file(File::open(file_path).unwrap())
+                        .with_header(Header::from_bytes("Content-Type", "text/html").unwrap()),
+                )
+                .unwrap();
             continue;
         }
         if let file_path = file_path.join("index.html")
             && file_path.is_file()
         {
-            request.respond(
-                Response::from_file(File::open(file_path)?)
-                    .with_header(Header::from_bytes("Content-Type", "text/html")?),
-            )?;
+            request
+                .respond(
+                    Response::from_file(File::open(file_path).unwrap())
+                        .with_header(Header::from_bytes("Content-Type", "text/html").unwrap()),
+                )
+                .unwrap();
             continue;
         }
-        request.respond(Response::empty(404))?;
+        request.respond(Response::empty(404)).unwrap();
     }
-
-    Ok(())
 }
