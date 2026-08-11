@@ -6,4 +6,4 @@ edition = "2024"
 [dependencies]
 argp = "0.4.1"
 mime_guess = "2.0.5"
-tiny_http = "0.12.0"
+tiny_http_fork = "0.12.12"

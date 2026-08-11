@@ -7,7 +7,7 @@ use std::{
 
 use argp::FromArgs;
 use mime_guess::{Mime, MimeGuess};
-use tiny_http::{Header, Response, Server};
+use tiny_http_fork::{Header, Response, Server};
 
 #[derive(FromArgs)]
 /// A simple HTTP server for serving a directory.
@@ -29,8 +29,15 @@ fn main() {
     println!("Server started at http://localhost:{}", args.port);
 
     for request in server.incoming_requests() {
-        let url = request.url();
-        let url = absolute(url).unwrap();
+        let request = match request {
+            Ok(r) => r,
+            Err(err) => {
+                eprintln!("Invalid request: {err}");
+                continue;
+            }
+        };
+
+        let url = absolute(request.url()).unwrap();
         let file_path = match url.strip_prefix("/") {
             Ok(p) => args.directory.join(p),
             Err(_) => args.directory.join(url),
