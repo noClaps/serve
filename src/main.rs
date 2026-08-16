@@ -54,7 +54,7 @@ fn main() {
             request
                 .respond(
                     Response::from_file(File::open(file_path).unwrap()).with_header(
-                        Header::from_bytes("Content-Type", file_type.to_string()).unwrap(),
+                        Header::from_str("Content-Type", file_type.to_string()).unwrap(),
                     ),
                 )
                 .unwrap();
@@ -66,7 +66,7 @@ fn main() {
             request
                 .respond(
                     Response::from_file(File::open(file_path).unwrap())
-                        .with_header(Header::from_bytes("Content-Type", "text/html").unwrap()),
+                        .with_header(Header::from_str("Content-Type", "text/html").unwrap()),
                 )
                 .unwrap();
             continue;
@@ -77,7 +77,7 @@ fn main() {
             request
                 .respond(
                     Response::from_file(File::open(file_path).unwrap())
-                        .with_header(Header::from_bytes("Content-Type", "text/html").unwrap()),
+                        .with_header(Header::from_str("Content-Type", "text/html").unwrap()),
                 )
                 .unwrap();
             continue;
