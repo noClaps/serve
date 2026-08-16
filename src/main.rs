@@ -50,9 +50,8 @@ fn main() {
                 MimeGuess::from_path(&file_path).first_or(Mime::from_str("text/plain").unwrap());
             request
                 .respond(
-                    Response::from_file(File::open(file_path).unwrap()).with_header(
-                        Header::from_str("Content-Type", file_type.to_string()).unwrap(),
-                    ),
+                    Response::from_file(File::open(file_path).unwrap())
+                        .with_header(Header::from_str("Content-Type", &file_type).unwrap()),
                 )
                 .unwrap();
             continue;
