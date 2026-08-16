@@ -31,10 +31,7 @@ fn main() {
     for request in server.incoming_requests() {
         let request = match request {
             Ok(r) => r,
-            Err(err) => {
-                eprintln!("Invalid request: {err}");
-                continue;
-            }
+            Err(_) => continue,
         };
 
         let url = absolute(request.url()).unwrap();
