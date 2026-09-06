@@ -130,9 +130,9 @@ dependencies = [
 
 [[package]]
 name = "tiny_http_fork"
-version = "0.12.16"
+version = "0.12.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08e85b81de48b1b9a6258724b3b3047ad9b5626d47861e9bbfcbf6172e6cdcfd"
+checksum = "617a2f8cf59dd170f474d1a4728b486c8a377d1c9fcbf83e2ee31b5278705398"
 dependencies = [
  "ascii",
  "chunked_transfer",
