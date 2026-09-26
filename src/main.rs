@@ -1,32 +1,43 @@
 use std::{
+    env::args,
     fs::File,
     net::{Ipv4Addr, SocketAddr},
     path::{PathBuf, absolute},
+    process::exit,
     str::FromStr,
 };
 
-use argp::FromArgs;
 use mime_guess::{Mime, MimeGuess};
 use tiny_http_fork::{Header, Response, Server};
 
-#[derive(FromArgs)]
-/// A simple HTTP server for serving a directory.
-struct Args {
-    /// The directory to serve.
-    #[argp(positional)]
-    directory: PathBuf,
-
-    /// The port to serve at. (default: 3000)
-    #[argp(option, short = 'p', default = "3000")]
-    port: u16,
-}
-
 fn main() {
-    let args: Args = argp::parse_args_or_exit(argp::DEFAULT);
+    let args: Vec<_> = args().skip(1).collect();
+    if args.contains(&"-h".to_string()) || args.contains(&"--help".to_string()) {
+        println!(
+            "\
+Usage: serve <directory>
 
-    let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), args.port);
+A simple HTTP server for serving a directory.
+
+Arguments:
+  <directory>  The directory to serve.
+
+Options:
+  -h, --help   Show this help and exit."
+        );
+        return;
+    }
+    if args.len() < 1 {
+        eprintln!("Missing required argument: <directory>");
+        exit(1);
+    }
+
+    let directory = PathBuf::from(&args[0]);
+    const PORT: u16 = 3000;
+
+    let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), PORT);
     let server = Server::http(addr).unwrap();
-    println!("Server started at http://localhost:{}", args.port);
+    println!("Server started at http://localhost:{PORT}");
 
     for request in server.incoming_requests() {
         let request = match request {
@@ -36,10 +47,10 @@ fn main() {
 
         let url = absolute(request.url()).unwrap();
         let file_path = match url.strip_prefix("/") {
-            Ok(p) => args.directory.join(p),
-            Err(_) => args.directory.join(url),
+            Ok(p) => directory.join(p),
+            Err(_) => directory.join(url),
         };
-        let file_path = if file_path.starts_with(&args.directory) {
+        let file_path = if file_path.starts_with(&directory) {
             file_path
         } else {
             continue;
