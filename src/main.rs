@@ -27,7 +27,7 @@ Options:
         );
         return;
     }
-    if args.len() < 1 {
+    if args.is_empty() {
         eprintln!("Missing required argument: <directory>");
         exit(1);
     }
