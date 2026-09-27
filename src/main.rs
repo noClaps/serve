@@ -33,17 +33,20 @@ Options:
     }
 
     let directory = PathBuf::from(&args[0]);
-    const PORT: u16 = 3000;
+    let mut port: u16 = 3000;
 
-    let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), PORT);
-    let server = Server::http(addr).unwrap();
-    println!("Server started at http://localhost:{PORT}");
+    let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), port);
+    let mut server = Server::http(addr);
+    while server.is_err() {
+        port += 1;
+        let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), port);
+        server = Server::http(addr);
+    }
+    let server = server.unwrap();
+    println!("Server started at http://localhost:{port}");
 
     for request in server.incoming_requests() {
-        let request = match request {
-            Ok(r) => r,
-            Err(_) => continue,
-        };
+        let Ok(request) = request else { continue };
 
         let url = absolute(request.url()).unwrap();
         let file_path = match url.strip_prefix("/") {
