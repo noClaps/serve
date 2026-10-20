@@ -12,8 +12,6 @@ import (
 )
 
 func main() {
-	htmlFallback := false
-
 	args := os.Args[1:]
 	if slices.Contains(args, "-h") || slices.Contains(args, "--help") {
 		fmt.Println(`Usage: serve <directory>
@@ -24,13 +22,8 @@ Arguments:
   <directory>  The directory to serve.
 
 Options:
-  --html       Try the .html extension if the requested path doesn't exist.
   -h, --help   Show this help and exit.`)
 		return
-	}
-	if i := slices.Index(args, "--html"); i != -1 {
-		htmlFallback = true
-		args = slices.Delete(args, i, i+1)
 	}
 	if len(args) == 0 {
 		log.Fatalln("Missing required argument: <directory>")
@@ -50,13 +43,11 @@ Options:
 			w.Write(f)
 			return
 		}
-		if htmlFallback {
-			f, err = os.ReadFile(filePath + ".html")
-			if err == nil {
-				w.Header().Add("Content-Type", "text/html")
-				w.Write(f)
-				return
-			}
+		f, err = os.ReadFile(filePath + ".html")
+		if err == nil {
+			w.Header().Add("Content-Type", "text/html")
+			w.Write(f)
+			return
 		}
 		f, err = os.ReadFile(filepath.Join(filePath, "index.html"))
 		if err == nil {

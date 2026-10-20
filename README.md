@@ -13,7 +13,6 @@ Arguments:
   <directory>  The directory to serve.
 
 Options:
-  --html       Try the .html extension if the requested path doesn't exist.
   -h, --help   Show this help and exit.
 ```
 
@@ -35,7 +34,7 @@ serve --help
 For a given request `/path/to/url`, the order in which files are served are:
 
 1. If `directory/path/to/url` exists, return it.
-2. If the `--html` flag was passed in and `directory/path/to/url.html` exists, return it.
+2. If `directory/path/to/url.html` exists, return it.
 3. If `directory/path/to/url/index.html` exists, return it.
 4. If `directory/404.html` exists, return it with status code 404.
 5. Return an empty response with status code 404.
