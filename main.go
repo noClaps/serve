@@ -39,7 +39,7 @@ Options:
 		log.Println("Serving ", filePath)
 		f, err := os.ReadFile(filePath)
 		if err == nil {
-			w.Header().Add("Content-Type", mime.TypeByExtension(filePath))
+			w.Header().Add("Content-Type", mime.TypeByExtension(filepath.Ext(filePath)))
 			w.Write(f)
 			return
 		}
