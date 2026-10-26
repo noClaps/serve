@@ -22,7 +22,7 @@ You can use the tool simply by running:
 serve dist    # or whatever path to the directory you want to serve
 ```
 
-This will serve the `dist/` directory at `http://localhost:3000`. If port `3000` is occupied, it will try port `3001`, then `3002`, and so on.
+This will serve the `dist/` directory at a random free port on your system.
 
 You can view the help by using `--help` or `-h`:
 

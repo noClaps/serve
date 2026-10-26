@@ -9,17 +9,14 @@ from pathlib import Path
 
 class Handler(SimpleHTTPRequestHandler):
     def translate_path(self, path):
-        fs_path = Path(super().translate_path(path))
-        if fs_path.is_file():
-            return str(fs_path)
-        if (html_path := fs_path.with_name(fs_path.name + ".html")).is_file():
-            return str(html_path)
-        if (index_path := fs_path / "index.html").is_file():
-            return str(index_path)
-        return super().translate_path(path)
+        path = super().translate_path(path)
+        for p in (path, path + ".html"):
+            if Path(p).is_file():
+                return p
+        return path
 
     def send_error(self, code, message=None, explain=None):
-        page = Path(self.directory) / "404.html"
+        page = Path(self.directory, "404.html")
         if code != HTTPStatus.NOT_FOUND or not page.is_file():
             return super().send_error(code, message, explain)
 
@@ -35,21 +32,12 @@ parser = ArgumentParser(
     "serve", description="a simple HTTP server for serving a directory"
 )
 parser.add_argument("directory", type=Path, help="the directory to serve")
-args = parser.parse_args()
 
-directory: Path = args.directory
-port = 3000
+directory: Path = parser.parse_args().directory
 
 if not directory.is_dir():
     parser.error(f"not a directory: {directory}")
 
-while True:
-    try:
-        server = ThreadingHTTPServer(("", port), partial(Handler, directory=directory))
-        break
-    except OSError:
-        port += 1
-        continue
-
-print(f"Serving {directory} at http://localhost:{port}")
+server = ThreadingHTTPServer(("", 0), partial(Handler, directory=directory))
+print(f"Serving {directory} at http://localhost:{server.server_port}")
 server.serve_forever()
