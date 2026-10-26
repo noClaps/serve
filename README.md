@@ -5,15 +5,15 @@ A simple HTTP server for serving a directory.
 ## Usage
 
 ```
-Usage: serve <directory>
+usage: serve [-h] directory
 
-A simple HTTP server for serving a directory.
+a simple HTTP server for serving a directory
 
-Arguments:
-  <directory>  The directory to serve.
+positional arguments:
+  directory   the directory to serve
 
-Options:
-  -h, --help   Show this help and exit.
+optional arguments:
+  -h, --help  show this help message and exit
 ```
 
 You can use the tool simply by running:
@@ -41,7 +41,7 @@ For a given request `/path/to/url`, the order in which files are served are:
 
 ## Installation
 
-You can build it from source using [Go](https://go.dev):
+You'll need [Python](https://python.org) (tested on Python 3.9.6 and 3.15.1). It should be built-in on most Linux and macOS systems
 
 ```sh
 go install codeberg.org/noclaps/serve@latest
