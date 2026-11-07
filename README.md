@@ -44,6 +44,6 @@ For a given request `/path/to/url`, the order in which files are served are:
 You'll need [Python](https://python.org) (tested on Python 3.9.6 and 3.15.1). It should be built-in on most Linux and macOS systems.
 
 ```sh
-git clone https://codeberg.org/noClaps/serve.git && cd serve
+git clone https://github.com/noClaps/serve.git && cd serve
 install ./serve ~/.local/bin/ # or somewhere else on your PATH
 ```
